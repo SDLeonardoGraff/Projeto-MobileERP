@@ -12,7 +12,7 @@ const Search = ({ onSearch }) => {
 
         const url = `https://erp.sdbr.app/api/request/Pedidos/Pesquisar?cliente=${text}`;
 
-        try{
+        try {
             const response = await fetch(url, {
                 method: "GET",
                 headers: {

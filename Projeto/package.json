@@ -13,15 +13,16 @@
     "@react-navigation/native-stack": "^6.9.26",
     "expo": "~51.0.17",
     "expo-asset": "^10.0.10",
+    "expo-device": "~6.0.2",
     "expo-linear-gradient": "~13.0.2",
     "expo-print": "~13.0.1",
     "expo-sharing": "~12.0.1",
     "expo-status-bar": "~1.12.1",
+    "moment": "^2.30.1",
     "react": "18.2.0",
     "react-native": "0.74.3",
     "react-native-animatable": "^1.4.0",
-    "react-native-paper": "^5.12.3",
-    "expo-device": "~6.0.2"
+    "react-native-paper": "^5.12.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -14,6 +14,8 @@ const BuscarPedido = () => {
         // Adicione mais dados conforme necessário
     ]); */
 
+    console.debug("BuscarPedido");
+
     const [filteredData, setFilteredData] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
 
