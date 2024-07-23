@@ -1,32 +1,39 @@
 // DataTable.js
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import moment from 'moment';
 import Divider from './DividerComp';
 //import CustomModal from './MOdal';
-//import Ionicons from ""
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import ModalContent from './ModalContent';
 
 const DataTable = ({ data }) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
+    const [existeNfe, setExisteNfe] = useState(true);
     const [pedido, setPedido] = useState([]);
     const [lancamento, setLancamento] = useState([]);
 
     const renderItem = ({ item, index }) => (
         <TouchableOpacity onPress={() => openModal(item, index)}>
             <View style={[styles.row, { backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#e0e0e0' }]}>
-                <Text style={styles.cell}>{item.Codigo}</Text>
-                <Text style={styles.cell}>{item.Cliente}</Text>
-                <Text style={styles.cell}>{item.ClienteEmail}</Text>
+                {/* <Text style={styles.cell}>{item.Codigo}</Text>
+                <Text style={styles.cell}>{item.Cliente}</Text> */}
+                <Text style={{ flexBasis: 80, paddingLeft: '5%', paddingVertical: 10 }}>{item.Codigo}</Text>
+                <Text style={{ flexBasis: 400, paddingLeft: "5%", paddingVertical: 10 }}>{item.Cliente}</Text>
             </View>
         </TouchableOpacity>
     );
 
     const openModal = (item, index) => {
         setModalVisible(true);
-        setPedido(data[index])
+        setPedido(data[index]);
         handleLancamento(data[index].Codigo);
     };
+
+    //console.log(pedido);
 
     const closeModal = () => {
         setModalVisible(false);
@@ -39,6 +46,17 @@ const DataTable = ({ data }) => {
             return `CPF: ${document?.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}`
         }
     };
+
+    useEffect(() => {
+        const verificaNfe = () => {
+            if (pedido.NumeroNFe === null || pedido.NumeroNFe === undefined) {
+                setExisteNfe(!existeNfe);
+            } else {
+                setExisteNfe(existeNfe);
+            }
+        }
+        verificaNfe();
+    }, []);
 
     const handleLancamento = async (value) => {
 
@@ -63,7 +81,7 @@ const DataTable = ({ data }) => {
     }
 
     const currencyFormat = (value) => {
-        const format = value?.toLocaleString(
+        const format = value.toLocaleString(
             'pt-BR',
             { style: 'currency', currency: 'BRL' }
         );
@@ -75,6 +93,10 @@ const DataTable = ({ data }) => {
         const newData = moment(data).format("DD/MM/YYYY");
 
         return newData;
+    };
+
+    const toggleModal = () => {
+        setMenuVisible(!menuVisible);
     }
 
     //console.log(pedido.Items?.length);
@@ -82,9 +104,8 @@ const DataTable = ({ data }) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerCell}>Codigo</Text>
-                <Text style={styles.headerCell}>Nome</Text>
-                <Text style={styles.headerCell}>Email</Text>
+                <Text style={{ flexBasis: 80, paddingLeft: '5%', fontWeight: 'bold', }}>Codigo</Text>
+                <Text style={{ flexBasis: 400, paddingLeft: "5%", fontWeight: 'bold', }}>Nome</Text>
             </View>
             <FlatList
                 data={data}
@@ -100,10 +121,30 @@ const DataTable = ({ data }) => {
                 transparent={true}
                 style={{ borderTopLeftRadius: 25, borderTopRightRadius: 25 }}
             >
-                <View style={{ backgroundColor: 'white', flex: 1/* , justifyContent: 'space-around' */, borderTopLeftRadius: 25, borderTopRightRadius: 25, marginTop: "5%" }}>
+                <View style={{ backgroundColor: 'white', flex: 1/* , justifyContent: 'space-around' */, borderTopLeftRadius: 25, borderTopRightRadius: 25, /* marginTop: "5%" */ }}>
                     {/* <View style={{marginRight: '3%', borderRadius: 25}}>
                     <Text style={{fontSize: 24, alignSelf: 'flex-end'}}>X</Text>
                 </View> */}
+                    <View style={{ backgroundColor: "#ddd", flexDirection: 'row', padding: '2%', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={{ flex: 1, alignItems: 'flex-start' }}>
+                            <AntDesign
+                                name="leftcircleo"
+                                color="#000"
+                                size={40}
+                            />
+                        </TouchableOpacity>
+                        <View style={{ flex: 3, alignItems: 'center' }}>
+                            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Venda</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)} style={{ flex: 1, alignItems: 'flex-end' }}>
+                            <MaterialCommunityIcons
+                                name="menu"
+                                color="#000"
+                                size={40}
+                            />
+                        </TouchableOpacity>
+                    </View>
+
                     <ScrollView /* contentContainerStyle={{ paddingHorizontal: '3%' }} */>
                         <View style={{ /* alignItems: 'center',  marginHorizontal: '3%',*/ marginBottom: 15, gap: 10 }}>
                             {/* <Text style={{
@@ -115,7 +156,7 @@ const DataTable = ({ data }) => {
                             }}>Informações do Pedido</Text> */}
                             {/* <Divider /> */}
 
-                            <View style={{ marginLeft: '3%', /* borderColor: 'black', borderWidth: 1, */ marginRight: '30%' }}>
+                            <View style={{ marginLeft: '3%', /* borderColor: 'black', borderWidth: 1, */ marginRight: '30%', marginTop: 5 }}>
                                 <View>
                                     <Text style={{ marginLeft: 5, borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Cliente</Text>
                                     <Text style={{ /* marginBottom: '2%', */ /* backgroundColor: "#eaeff6", */ padding: 5/* , borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{pedido.Cliente}</Text>
@@ -142,7 +183,7 @@ const DataTable = ({ data }) => {
                             <View style={{ marginLeft: '3%', /* borderColor: 'black', borderWidth: 1, */ marginRight: '30%' }}>
                                 <View>
                                     <Text style={{ marginLeft: 5, borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Data de Cadastro</Text>
-                                    <Text style={{ /* marginBottom: '2%', */ /* backgroundColor: "#eaeff6", */ padding: 5/* , borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{moment(pedido.Data).format("DD/MM/YYYY")}</Text>
+                                    <Text style={{ /* marginBottom: '2%', */ /* backgroundColor: "#eaeff6", */ padding: 5/* , borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{dataFormat(pedido.Data)}</Text>
                                 </View>
                             </View>
 
@@ -190,7 +231,7 @@ const DataTable = ({ data }) => {
                             </View> */}
                         </View>
 
-                        <View style={{ marginBottom: 15 }}>
+                        <View style={{ marginBottom: 5 }}>
                             <Text style={{/*  marginBottom: '2%', padding: 5, borderColor: 'black', borderWidth: 1 */paddingRight: 20, paddingLeft: 20, paddingTop: 20, backgroundColor: "#D3D3D3", fontSize: 18 }}>Grupo de Produtos</Text>
                             {/* <Divider /> */}
                             {/*  */}<View style={{ marginHorizontal: '3%' }}>
@@ -198,20 +239,20 @@ const DataTable = ({ data }) => {
                                     pedido.Items ? (
                                         pedido.Items.map((item, index) => (
                                             <View key={index}>
-                                                <View>
-                                                    <Text style={{ color: "#BA55D3", fontSize: 16 }}>{item.Descricao}</Text>
-                                                    <View>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>Quantidade</Text>
+                                                <View style={{ marginTop: 5 }}>
+                                                    <Text style={{ color: "#8A2BE2", fontSize: 16, fontWeight: 'bold', marginTop: 5 }}>{item.Descricao}</Text>
+                                                    <View style={{ marginTop: '3%' }}>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 14}}>Quantidade</Text>
                                                         <Text>{item.Quantidade} KG/ UN</Text>
                                                     </View>
-                                                    <View style={{ flexDirection: 'row', gap: 50 }}>
+                                                    <View style={{ flexDirection: 'row', gap: 50, marginTop: '2%' }}>
                                                         <View>
                                                             <Text style={{ fontWeight: 'bold', fontSize: 14 }}>Valor Un.</Text>
-                                                            <Text>{item.ValorUnitario}</Text>
+                                                            <Text>{currencyFormat(item.ValorUnitario)}</Text>
                                                         </View>
                                                         <View>
                                                             <Text style={{ fontWeight: 'bold', fontSize: 14 }}>SubTotal</Text>
-                                                            <Text>{item.ValorTotal}</Text>
+                                                            <Text>{currencyFormat(item.ValorTotal)}</Text>
                                                         </View>
                                                     </View>
                                                 </View>
@@ -225,8 +266,8 @@ const DataTable = ({ data }) => {
                             </View>
                         </View>
 
-                        <View style={{ marginBottom: 15 }}>
-                            <Text style={{/*  marginBottom: '2%', padding: 5, borderColor: 'black', borderWidth: 1 */paddingRight: 20, paddingLeft: 20, paddingTop: 20, backgroundColor: "#D3D3D3", fontSize: 18 }}>Informações Financeiras</Text>
+                        <View style={{ marginBottom: 5 }}>
+                            <Text style={{/*  marginBottom: '2%', padding: 5, borderColor: 'black', borderWidth: 1 paddingRight: 20,*/ paddingLeft: 20, paddingTop: 20, backgroundColor: "#D3D3D3", fontSize: 18 }}>Informações Financeiras</Text>
                             {/* <Divider />*/}
                             <View style={{ marginHorizontal: '3%' }}>
                                 <View>
@@ -234,18 +275,31 @@ const DataTable = ({ data }) => {
                                         pedido.Pagamentos ? (
                                             pedido.Pagamentos.map((item, index) => (
                                                 <View key={index}>
-                                                    <View>
+
+                                                    <View style={{ /*marginLeft: '1%',  borderColor: 'black', borderWidth: 1,  marginRight: '30%'*/ marginTop: 5 }}>
+                                                        <View style={{ marginBottom: '2%' }}>
+                                                            <Text style={{  marginLeft: 5,/* */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Plano De Contas</Text>
+                                                            <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 5 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
+                                                        </View>
+                                                    </View>
+
+                                                    <Divider />
+                                                    {/* <View>
                                                         <Text>Plano De Contas</Text>
                                                         <Text>{!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
+                                                    </View> */}
+                                                    <View style={{ marginBottom: '2%' }}>
+                                                        <Text style={{  marginLeft: 5, /**/ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Forma de Pagamento</Text>
+                                                        <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 5 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{item.FormaPagamento}</Text>
                                                     </View>
-                                                    <View>
-                                                        <Text>Forma de Pagamento</Text>
-                                                        <Text>{item.FormaPagamento}</Text>
+
+                                                    <Divider />
+
+                                                    <View /* style={{ marginBottom: '2%' }} */>
+                                                        <Text style={{  marginLeft: 5, /**/ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Valor do Pagamento</Text>
+                                                        <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 5 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{currencyFormat(item.ValorPagamento)}</Text>
                                                     </View>
-                                                    <View>
-                                                        <Text>Valor do Pagamento</Text>
-                                                        <Text>{currencyFormat(item.ValorPagamento)}</Text>
-                                                    </View>
+
                                                     {/* <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Plano de contas: {!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
                                                     <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Forma de Pagamento: {item.FormaPagamento}</Text>
                                                     <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Valor do Pagamento: {currencyFormat(item.ValorPagamento)}</Text> */}
@@ -260,38 +314,77 @@ const DataTable = ({ data }) => {
                         </View>
 
                         <View style={{ marginBottom: 15 }}>
-                            <Text style={{/*  marginBottom: '2%', backgroundColor: "#87CEEB", padding: 5, borderColor: 'black', borderWidth: 1  */marginLeft: 5, }}>Lancamentos</Text>
-                            {/* <Divider />
+                            <Text style={{/*  marginBottom: '2%', padding: 5, borderColor: 'black', borderWidth: 1 */paddingRight: 20, paddingLeft: 20, paddingTop: 20, backgroundColor: "#D3D3D3", fontSize: 18 }}>Lançamentos</Text>
                             <View style={{ marginHorizontal: '3%' }}>
-                                {
-                                    lancamento ? (
-                                        lancamento.map((item, index) => (
-                                            <View key={index}>
-                                                <Text style={{ marginBottom: '2%', backgroundColor: "#87CEEB", padding: 5, borderColor: 'black', borderWidth: 1 }}>Código Lançamento: {item.Codigo}</Text>
-                                                <Text style={{ marginBottom: '2%', backgroundColor: "#87CEEB", padding: 5, borderColor: 'black', borderWidth: 1 }}>Descrição: {item.Descricao}</Text>
-                                                <Text style={{ marginBottom: '2%', backgroundColor: "#87CEEB", padding: 5, borderColor: 'black', borderWidth: 1 }}>Foi Pago: {!item.Quitado ? "Não" : "Sim"}</Text>
-                                                <Text style={{ marginBottom: '2%', backgroundColor: "#87CEEB", padding: 5, borderColor: 'black', borderWidth: 1 }}>Data Vencimento: {dataFormat(item.DataVencimento)}</Text>
-                                                <Text style={{ marginBottom: '2%', backgroundColor: "#87CEEB", padding: 5, borderColor: 'black', borderWidth: 1 }}>Valor: {currencyFormat(item.Valor)}</Text>
-                                            </View>
-                                        ))
-                                    ) : (
-                                        <></>
-                                    )
-                                }
-                            </View> */}
+                                <View>
+                                    {
+                                        lancamento.length > 0 ? (
+                                            lancamento.map((item, index) => (
+                                                <View key={index}>
+
+                                                    <View style={{ /*marginLeft: '1%',  borderColor: 'black', borderWidth: 1,  marginRight: '30%'*/ marginTop: 5 }}>
+                                                        <View style={{ marginBottom: '2%' }}>
+                                                            <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Código do Lançamento</Text>
+                                                            <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 1 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{item.Codigo}</Text>
+                                                        </View>
+                                                    </View>
+                                                    {/* <View>
+                                                        <Text>Plano De Contas</Text>
+                                                        <Text>{!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
+                                                    </View> */}
+                                                    <View style={{ marginBottom: '2%' }}>
+                                                        <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Data de Vencimento</Text>
+                                                        <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 1 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{dataFormat(item.DataVencimento)}</Text>
+                                                    </View>
+
+                                                    <View /* style={{ marginBottom: '2%' }} */>
+                                                        <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Valor do Pagamento</Text>
+                                                        <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 1 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{currencyFormat(item.Valor)}</Text>
+                                                    </View>
+                                                    {/* <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Plano de contas: {!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
+                                                    <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Forma de Pagamento: {item.FormaPagamento}</Text>
+                                                    <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Valor do Pagamento: {currencyFormat(item.ValorPagamento)}</Text> */}
+                                                     <View /* style={{ marginBottom: '2%' }} */>
+                                                        <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Quitado</Text>
+                                                        <Text style={{ color: `${!item.Quitado ? "red" : "green"}` }}>{!item.Quitado ? "Não" : "Sim"}</Text>
+                                                    </View>
+                                                </View>
+                                            ))
+                                        ) : (
+                                            <></>
+                                        )
+                                    }
+                                </View>
+                            </View>
                         </View>
 
-
-
-                        <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={{ alignItems: 'center' }}>
-                            {/* <Ionicons 
-                            name="close-circle"
-                            color="#000"
-                            size={40}
-                            onPress={() => setVisible(!visible)}
-                        /> */}
-                            <Text>X</Text>
-                        </TouchableOpacity>
+                        <ModalContent isVisible={menuVisible} onClose={toggleModal} existeNfe={existeNfe}/>
+                        {/* {
+                            menuVisible ?
+                            <Animatable.View
+                            animation="fadeInLeft" delay={500}
+                            //visible={menuVisible}
+                            //transparent={true}
+                            style={{
+                                borderTopLeftRadius: 25, borderTopRightRadius: 25, justifyContent: 'flex-end', minHeight: 500,
+                                marginLeft: 200,// Posição do modal
+                                margin: 0,
+                                backgroundColor: '#000'
+                            }}>
+                            <View style={{
+                                borderColor: '#000',
+                                borderWidth: 1,
+                                padding: 20,
+                                borderTopLeftRadius: 10,
+                                minHeight: 500,
+                                marginLeft: 200,
+                                borderBottomLeftRadius: 10, marginTop: "15%"
+                            }}>
+                                <Text style={{ color: '#fff' }}>Olá</Text>
+                            </View>
+                        </Animatable.View>
+                        : <></>
+                    } */}
                     </ScrollView>
                 </View>
             </Modal>
@@ -313,7 +406,8 @@ const styles = StyleSheet.create({
     headerCell: {
         flex: 1,
         fontWeight: 'bold',
-        textAlign: 'center',
+        textAlign: 'left',
+
     },
     row: {
         flexDirection: 'row',
@@ -323,7 +417,9 @@ const styles = StyleSheet.create({
     },
     cell: {
         flex: 1,
-        textAlign: 'center',
+        //textAlign: 'center',
+        justifyContent: 'center',
+        marginLeft: 5,
     },
 });
 

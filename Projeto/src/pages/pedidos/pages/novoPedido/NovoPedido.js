@@ -4,64 +4,73 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, SafeAreaView } from 'react-native';
 
 const NovoPedido = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [name, setName] = useState("");
+    const [cliente, setCliente] = useState("Leonardo");
+    const [statusSistema, setStatusSistema] = useState("Pedido");
+    const [vendedor, setVendedor] = useState("Leonardo");
+    const [tabelaPreco, setTabelaPreco] = useState("Tabela 2024");
+    const [categoria, setCategoria] = useState("Venda CNPJ Fora Estabelecimento");
 
     const handleSubmit = () => {
         // Validação básica
-        if (name === '' || email === '') {
+        /* if (cliente === '' || /* statusSistema === '' ||  vendedor === '' || tabelaPreco === '' || categoria === '') {
             Alert.alert('Erro', 'Todos os campos são obrigatórios');
             return;
-        }
-        Alert.alert('Formulário Enviado', `Nome: ${name}\nEmail: ${email}`);
+        } */
+        Alert.alert('Formulário Enviado', `Nome: ${cliente}\nStatus: ${statusSistema}\nVendedor: ${vendedor}\nTabela: ${tabelaPreco}\nCategoria: ${categoria}`);
         // Limpar campos
-        setName('');
-        setEmail('');
+        setCliente('');
+        setStatusSistema('');
+        setVendedor('');
+        setVendedor('');
+        setTabelaPreco('');
+        setCategoria('');
     };
 
     return (
         <SafeAreaView>
             <View style={styles.container}>
-                <Text style={styles.label}>Nome</Text>
+                <Text style={styles.label}>Cliente</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Digite seu nome"
-                    value={name}
-                    onChangeText={setName}
+                    value={cliente}
+                    onChangeText={setCliente}
+                    keyboardType='default'
                 />
-                <Text style={styles.label}>Email</Text>
+                {/* <Text style={styles.label}>Status do Sistema</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Digite seu email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
+                    value={statusSistema}
+                    onChangeText={setStatusSistema}
+                    keyboardType="default"
                 />
-                <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>Vendedor</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Digite seu email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
+                    value={vendedor}
+                    onChangeText={setVendedor}
+                    keyboardType="default"
                 />
-                <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>Tabela de Preço</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Digite seu email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
+                    value={tabelaPreco}
+                    onChangeText={setTabelaPreco}
+                    keyboardType="default"
                 />
-                <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>Categoria</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Digite seu email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
+                    value={categoria}
+                    onChangeText={setCategoria}
+                    keyboardType="default"
                 />
-                <Button title="Enviar" onPress={handleSubmit} />
+                <Button title="Salvar" onPress={handleSubmit} /> */}
             </View>
         </SafeAreaView>
     );
@@ -69,11 +78,11 @@ const NovoPedido = () => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        padding: 10,
     },
     label: {
         fontSize: 18,
-        marginVertical: 10,
+        marginVertical: 5,
     },
     input: {
         height: 40,
