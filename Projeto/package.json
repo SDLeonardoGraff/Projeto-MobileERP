@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native-stack": "^6.9.26",
+    "dotenv": "^16.4.5",
     "expo": "~51.0.17",
     "expo-asset": "^10.0.10",
     "expo-device": "~6.0.2",
@@ -22,6 +23,7 @@
     "react": "18.2.0",
     "react-native": "0.74.3",
     "react-native-animatable": "^1.4.0",
+    "react-native-dotenv": "^3.4.11",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^5.12.3"
   },

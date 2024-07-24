@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
+import { TOKEN_ERP_ZAGO, USER_ERP_ZAGO, APP_ERP_ZAGO } from '@env';
 
 const Search = ({ onSearch }) => {
     const [query, setQuery] = useState('');
@@ -17,9 +18,9 @@ const Search = ({ onSearch }) => {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
-                    'Authorization-Token': '5d6c05df95c3cd886a84d92f076d8bc492beb4672b47e68419f5a710d1b31f0d851ea943f348e849b9e002915da3ca4e92584e61cd8f3604e3257a2d321eb4e3ea47f8600a876ec9d27cbbf9a93392e8b85c78783c6a87dc975750214b91cccc1f59760f16ea97af217ca01ae0180d56b5341679f1e64ce0f3284845da9a882c',
-                    'User': 'demo@sdbr.app',
-                    'App': 'AppSDBR_demo',
+                    'Authorization-Token': TOKEN_ERP_ZAGO,
+                    'User': USER_ERP_ZAGO,
+                    'App': APP_ERP_ZAGO,
                 }
             });
             const data = await response.json();

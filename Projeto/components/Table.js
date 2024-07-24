@@ -8,11 +8,12 @@ import Divider from './DividerComp';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import ModalContent from './ModalContent';
+import { TOKEN_ERP_ZAGO, USER_ERP_ZAGO, APP_ERP_ZAGO } from '@env';
 
 const DataTable = ({ data }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
-    const [existeNfe, setExisteNfe] = useState(true);
+    const [existeNfe, setExisteNfe] = useState(false);
     const [pedido, setPedido] = useState([]);
     const [lancamento, setLancamento] = useState([]);
 
@@ -33,7 +34,7 @@ const DataTable = ({ data }) => {
         handleLancamento(data[index].Codigo);
     };
 
-    //console.log(pedido);
+    //console.log(TOKEN_ERP);
 
     const closeModal = () => {
         setModalVisible(false);
@@ -48,14 +49,14 @@ const DataTable = ({ data }) => {
     };
 
     useEffect(() => {
-        const verificaNfe = () => {
-            if (pedido.NumeroNFe === null || pedido.NumeroNFe === undefined) {
-                setExisteNfe(!existeNfe);
-            } else {
+        const verificaNfe = (pedido) => {
+            if (pedido.NumeroNFe === null || pedido.NumeroNFe === undefined || pedido.NumeroNFe === '') {
                 setExisteNfe(existeNfe);
+            } else {
+                setExisteNfe(!existeNfe);
             }
         }
-        verificaNfe();
+        verificaNfe(pedido);
     }, []);
 
     const handleLancamento = async (value) => {
@@ -67,9 +68,9 @@ const DataTable = ({ data }) => {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'Authorization-Token': '5d6c05df95c3cd886a84d92f076d8bc492beb4672b47e68419f5a710d1b31f0d851ea943f348e849b9e002915da3ca4e92584e61cd8f3604e3257a2d321eb4e3ea47f8600a876ec9d27cbbf9a93392e8b85c78783c6a87dc975750214b91cccc1f59760f16ea97af217ca01ae0180d56b5341679f1e64ce0f3284845da9a882c',
-                    'User': 'demo@sdbr.app',
-                    'App': 'AppSDBR_demo',
+                    'Authorization-Token': TOKEN_ERP_ZAGO,
+                    'User': USER_ERP_ZAGO,
+                    'App': APP_ERP_ZAGO,
                 }
             });
             const data = await response.json();
@@ -242,7 +243,7 @@ const DataTable = ({ data }) => {
                                                 <View style={{ marginTop: 5 }}>
                                                     <Text style={{ color: "#8A2BE2", fontSize: 16, fontWeight: 'bold', marginTop: 5 }}>{item.Descricao}</Text>
                                                     <View style={{ marginTop: '3%' }}>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 14}}>Quantidade</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>Quantidade</Text>
                                                         <Text>{item.Quantidade} KG/ UN</Text>
                                                     </View>
                                                     <View style={{ flexDirection: 'row', gap: 50, marginTop: '2%' }}>
@@ -266,19 +267,20 @@ const DataTable = ({ data }) => {
                             </View>
                         </View>
 
-                        <View style={{ marginBottom: 5 }}>
+                        {
+                            pedido.Pagamentos ? (
+                                <View style={{ marginBottom: 5 }}>
                             <Text style={{/*  marginBottom: '2%', padding: 5, borderColor: 'black', borderWidth: 1 paddingRight: 20,*/ paddingLeft: 20, paddingTop: 20, backgroundColor: "#D3D3D3", fontSize: 18 }}>Informações Financeiras</Text>
                             {/* <Divider />*/}
                             <View style={{ marginHorizontal: '3%' }}>
                                 <View>
                                     {
-                                        pedido.Pagamentos ? (
                                             pedido.Pagamentos.map((item, index) => (
                                                 <View key={index}>
 
                                                     <View style={{ /*marginLeft: '1%',  borderColor: 'black', borderWidth: 1,  marginRight: '30%'*/ marginTop: 5 }}>
                                                         <View style={{ marginBottom: '2%' }}>
-                                                            <Text style={{  marginLeft: 5,/* */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Plano De Contas</Text>
+                                                            <Text style={{ marginLeft: 5,/* */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Plano De Contas</Text>
                                                             <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 5 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
                                                         </View>
                                                     </View>
@@ -289,14 +291,14 @@ const DataTable = ({ data }) => {
                                                         <Text>{!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
                                                     </View> */}
                                                     <View style={{ marginBottom: '2%' }}>
-                                                        <Text style={{  marginLeft: 5, /**/ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Forma de Pagamento</Text>
+                                                        <Text style={{ marginLeft: 5, /**/ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Forma de Pagamento</Text>
                                                         <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 5 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{item.FormaPagamento}</Text>
                                                     </View>
 
                                                     <Divider />
 
                                                     <View /* style={{ marginBottom: '2%' }} */>
-                                                        <Text style={{  marginLeft: 5, /**/ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Valor do Pagamento</Text>
+                                                        <Text style={{ marginLeft: 5, /**/ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Valor do Pagamento</Text>
                                                         <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 5 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{currencyFormat(item.ValorPagamento)}</Text>
                                                     </View>
 
@@ -305,29 +307,31 @@ const DataTable = ({ data }) => {
                                                     <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Valor do Pagamento: {currencyFormat(item.ValorPagamento)}</Text> */}
                                                 </View>
                                             ))
-                                        ) : (
-                                            <></>
-                                        )
                                     }
                                 </View>
                             </View>
                         </View>
+                            ) : (
+                                <></>
+                            )
+                        }
 
-                        <View style={{ marginBottom: 15 }}>
-                            <Text style={{/*  marginBottom: '2%', padding: 5, borderColor: 'black', borderWidth: 1 */paddingRight: 20, paddingLeft: 20, paddingTop: 20, backgroundColor: "#D3D3D3", fontSize: 18 }}>Lançamentos</Text>
-                            <View style={{ marginHorizontal: '3%' }}>
-                                <View>
+                        {
+                            lancamento.length > 0 ? (
+                                <View style={{ marginBottom: 15 }}>
+                                    <Text style={{/*  marginBottom: '2%', padding: 5, borderColor: 'black', borderWidth: 1 */paddingRight: 20, paddingLeft: 20, paddingTop: 20, backgroundColor: "#D3D3D3", fontSize: 18 }}>Lançamentos</Text>
+                                    <View style={{ marginHorizontal: '3%' }}>
+                                    <View>
                                     {
-                                        lancamento.length > 0 ? (
                                             lancamento.map((item, index) => (
                                                 <View key={index}>
-
                                                     <View style={{ /*marginLeft: '1%',  borderColor: 'black', borderWidth: 1,  marginRight: '30%'*/ marginTop: 5 }}>
                                                         <View style={{ marginBottom: '2%' }}>
                                                             <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Código do Lançamento</Text>
                                                             <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 1 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{item.Codigo}</Text>
                                                         </View>
                                                     </View>
+                                                    <Divider />
                                                     {/* <View>
                                                         <Text>Plano De Contas</Text>
                                                         <Text>{!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
@@ -336,29 +340,31 @@ const DataTable = ({ data }) => {
                                                         <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Data de Vencimento</Text>
                                                         <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 1 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{dataFormat(item.DataVencimento)}</Text>
                                                     </View>
-
-                                                    <View /* style={{ marginBottom: '2%' }} */>
+                                                    <Divider />
+                                                    <View style={{ marginBottom: '2%' }}>
                                                         <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Valor do Pagamento</Text>
                                                         <Text style={{ /* marginBottom: '2%', *//*  backgroundColor: "#eaeff6", */ padding: 1 /*, borderColor: 'black', borderWidth: 1 */, /* borderBottomColor: "#000", borderBottomWidth: 1 *//* borderRadius: 10, borderColor: "#000", borderWidth: 1 */ }}>{currencyFormat(item.Valor)}</Text>
                                                     </View>
+                                                    <Divider />
                                                     {/* <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Plano de contas: {!pedido.PlanoDeConta ? "Nenhum plano de contas encontrado" : pedido.PlanoDeConta}</Text>
                                                     <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Forma de Pagamento: {item.FormaPagamento}</Text>
                                                     <Text style={{ marginBottom: '2%', backgroundColor: "#F08080", padding: 5, borderColor: 'black', borderWidth: 1 }}>Valor do Pagamento: {currencyFormat(item.ValorPagamento)}</Text> */}
-                                                     <View /* style={{ marginBottom: '2%' }} */>
+                                                    <View /* style={{ marginBottom: '2%' }} */>
                                                         <Text style={{ /* marginLeft: 5, */ borderRadius: 10, fontWeight: 'bold', fontSize: 14 }}>Quitado</Text>
                                                         <Text style={{ color: `${!item.Quitado ? "red" : "green"}` }}>{!item.Quitado ? "Não" : "Sim"}</Text>
                                                     </View>
                                                 </View>
                                             ))
-                                        ) : (
-                                            <></>
-                                        )
                                     }
                                 </View>
-                            </View>
-                        </View>
+                                    </View>
+                                </View>
+                            ) : (
+                                <></>
+                            )
+                        }
 
-                        <ModalContent isVisible={menuVisible} onClose={toggleModal} existeNfe={existeNfe}/>
+                        <ModalContent isVisible={menuVisible} onClose={toggleModal} existeNfe={existeNfe} />
                         {/* {
                             menuVisible ?
                             <Animatable.View
